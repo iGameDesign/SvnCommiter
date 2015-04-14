@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SvnCommiter" GeneratedClassName="Config">
+  <Profiles />
+  <Settings>
+    <Setting Name="CommitUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://xsj.kingsoft.net/DevSimple/Task/SvnCommiterDirect.aspx</Value>
+    </Setting>
+    <Setting Name="SvnPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">svn_bin/svn.exe</Value>
+    </Setting>
+    <Setting Name="FoldPaths" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Svn6Path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">svn_bin/svn6.exe</Value>
+    </Setting>
+    <Setting Name="Svn7Path" Type="System.String" Scope="User">
+      <Value Profile="(Default)">svn_bin/svn7.exe</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
