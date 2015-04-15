@@ -45,10 +45,11 @@ namespace SvnCommiter
             if (m_FolderPathDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            if (string.IsNullOrEmpty(m_FoldPath.Text))
-                m_FoldPath.Text = m_FolderPathDialog.SelectedPath;
-            else
-                m_FoldPath.Text = string.Format("{0}\r\n{1}", m_FoldPath.Text, m_FolderPathDialog.SelectedPath);
+            //if (string.IsNullOrEmpty(m_FoldPath.Text))
+            //    m_FoldPath.Text = m_FolderPathDialog.SelectedPath;
+            //else
+            //    m_FoldPath.Text = string.Format("{0}\r\n{1}", m_FoldPath.Text, m_FolderPathDialog.SelectedPath);
+            m_FoldPath.Text = m_FolderPathDialog.SelectedPath;
         }
 
         private void Search_Click(object sender, EventArgs e)
@@ -148,7 +149,7 @@ namespace SvnCommiter
             try
             {
                 List<string> lines = new List<string>();
-                lines.AddRange(m_FoldPath.Lines);
+                //lines.AddRange(m_FoldPath.Lines);
 
                 TextBox textBox = (TextBox)sender;
                 Array array = (Array)e.Data.GetData(DataFormats.FileDrop);
@@ -156,14 +157,13 @@ namespace SvnCommiter
                 foreach (object o in array)
                 {
                     lines.Add(o.ToString());
+                    break;
                 }
 
                 m_FoldPath.Lines = lines.ToArray();
             }
             catch
-            {
-
-            }
+            { }
         }
 
         private void SvnCommiterUI_Load(object sender, EventArgs e)
@@ -303,16 +303,17 @@ namespace SvnCommiter
                         string StrSubPath = "";
 
                         bSvnURlFlag = TryChangeToSvnUrl(reader["path"], out svnUrl);
-                        if (!bSvnURlFlag)
+                        //if (!bSvnURlFlag)
                         {
                             StrSubPath = reader["path"];
-                            if (StrSubPath.Length > strFilePath.Length)
-                            {
-                                StrSubPath = StrSubPath.Substring(strFilePath.Length, StrSubPath.Length - strFilePath.Length);
-                            }
+                            //if (StrSubPath.Length > strFilePath.Length)
+                            //{
+                            //    StrSubPath = StrSubPath.Substring(strFilePath.Length, StrSubPath.Length - strFilePath.Length);
+                            //}
 				  	 	 	
                             StrSubPath = StrSubPath.Replace("\\", "/");
-                            svnUrl = strFilePathUrl + StrSubPath;
+                            //svnUrl = strFilePathUrl + StrSubPath;
+                            svnUrl = StrSubPath;
                         }
 
                         strEntryUrl = svnUrl;
@@ -411,7 +412,7 @@ namespace SvnCommiter
         private void SetControlsIsEnable(bool bEnable)
         {
             this.m_Search.Enabled = bEnable;
-            this.m_Apply.Enabled = bEnable;
+            //this.m_Apply.Enabled = bEnable;
             this.m_Clear.Enabled = bEnable;
             this.m_OpenFolder.Enabled = bEnable;
             this.m_ShowTypeCheckedList.Enabled = bEnable;
@@ -419,7 +420,7 @@ namespace SvnCommiter
 
         private void replace_Replace(object sender, SearchEventArgs f)
         {
-            StringBuilder builder = new StringBuilder();					 	 	 	
+            StringBuilder builder = new StringBuilder();
             string selectedText = m_FlieList.SelectedText;
             if (string.IsNullOrEmpty(selectedText))
                 return;
@@ -430,7 +431,7 @@ namespace SvnCommiter
             string stringEnd = m_FlieList.Text.Substring(m_FlieList.SelectionStart + m_FlieList.SelectionLength, m_FlieList.Text.Length - m_FlieList.SelectionStart - m_FlieList.SelectionLength);
             builder.AppendFormat("{0}{1}{2}", stringBeg, selectedText, stringEnd);
 
-            m_FlieList.Text = builder.ToString();									 	
+            m_FlieList.Text = builder.ToString();
         }
 
         private void m_Publish_Click(object sender, EventArgs e)
@@ -439,6 +440,84 @@ namespace SvnCommiter
                 MessageBox.Show("你的改动和游戏逻辑的配置相关，请确保已使用剑三资源检查工具自测");
             Browser browser = new Browser(m_FlieList.Text, 401);
             browser.ShowDialog();
+        }
+
+        private void btCopy2Dst_Click(object sender, EventArgs e)
+        {
+            string szSrcFolder = m_FoldPath.Text;
+            szSrcFolder = szSrcFolder.Replace('\\', '/');
+            string szDstFolder = tbDstFolderPath.Text;
+            szDstFolder = szDstFolder.Replace('\\', '/');
+
+            string[] filelist = this.m_FlieList.Text.ToString().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string szScrFile in filelist)
+            {
+                string szSubPath = szScrFile.Substring(szSrcFolder.Length, szScrFile.Length - szSrcFolder.Length);
+                string szDstFile = szDstFolder + szSubPath;
+
+                if (File.Exists(szDstFile))
+                {
+                    MessageBox.Show("The file is exists, will be overwrited!");
+                    File.Copy(szScrFile, szDstFile, true);
+                }
+                else
+                {
+                    string szDstPath = Path.GetDirectoryName(szDstFile);
+                    if (!Directory.Exists(szDstPath))
+                    {
+                        Directory.CreateDirectory(szDstPath);
+                    }
+
+                    FileStream fs = new FileStream(szDstFile, FileMode.Create);
+                    StreamWriter sw = new StreamWriter(fs);
+                    sw.Write("text");
+                    sw.Close();
+                    fs.Close();
+                    MessageBox.Show("写入成功");
+                }
+            }
+        }
+
+        private void btnOpenDstFolder_Click(object sender, EventArgs e)
+        {
+            if (m_FolderPathDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            //if (string.IsNullOrEmpty(tbDstFolderPath.Text))
+            //    tbDstFolderPath.Text = m_FolderPathDialog.SelectedPath;
+            //else
+            //    tbDstFolderPath.Text = string.Format("{0}\r\n{1}", tbDstFolderPath.Text, m_FolderPathDialog.SelectedPath);
+            tbDstFolderPath.Text = m_FolderPathDialog.SelectedPath;
+        }
+
+        private void DstFoldPath_DragDrop(object sender, DragEventArgs e)
+        {
+            try
+            {
+                List<string> lines = new List<string>();
+                //lines.AddRange(tbDstFolderPath.Lines);
+
+                TextBox textBox = (TextBox)sender;
+                Array array = (Array)e.Data.GetData(DataFormats.FileDrop);
+
+                foreach (object o in array)
+                {
+                    lines.Add(o.ToString());
+                    break;
+                }
+
+                tbDstFolderPath.Lines = lines.ToArray();
+            }
+            catch
+            { }
+        }
+
+        private void DstFoldPath_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data != null)
+                e.Effect = DragDropEffects.Link;
+            else
+                e.Effect = DragDropEffects.None;
         }
 
     }
@@ -451,7 +530,7 @@ namespace SvnCommiter
             {
                 if (m_Config == null)
                     m_Config = new Config();
-                return m_Config;									 	
+                return m_Config;
             }
         }
         static Config m_Config;
