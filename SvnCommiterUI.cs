@@ -437,7 +437,7 @@ namespace SvnCommiter
         private void m_Publish_Click(object sender, EventArgs e)
         {
             if (m_FlieList.Text.Contains("client/settings"))
-                MessageBox.Show("你的改动和游戏逻辑的配置相关，请确保已使用剑三资源检查工具自测");
+                MessageBox.Show("你的改动和游戏逻辑的配置相关，请确保已使用资源检查工具自测");
             Browser browser = new Browser(m_FlieList.Text, 401);
             browser.ShowDialog();
         }
@@ -457,7 +457,7 @@ namespace SvnCommiter
 
                 if (File.Exists(szDstFile))
                 {
-                    MessageBox.Show("The file is exists, will be overwrited!");
+                    MessageBox.Show("The file is exists, will be overwrited! Are you sure?", "Copy", MessageBoxButtons.YesNo | MessageBoxButtons.RetryCancel);
                     File.Copy(szScrFile, szDstFile, true);
                 }
                 else
@@ -473,7 +473,7 @@ namespace SvnCommiter
                     sw.Write("text");
                     sw.Close();
                     fs.Close();
-                    MessageBox.Show("写入成功");
+                    //MessageBox.Show("Copy success!");
                 }
             }
         }
